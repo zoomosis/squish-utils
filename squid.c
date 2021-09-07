@@ -1,25 +1,23 @@
 /*
  *  squid.c
  *
- *  Displays information about a Squish message base.  Just like SquishMail's
- *  SQINFO only crunchy.
- *
+ *  Displays information about a Squish message base.
  *  Written by Andrew Clarke and released to the public domain.
  *
- *  Version history
- *  ---------------
+ *  Changelog
+ *  ---------
  *
- *  1.0  1996-04-04  ozzmosis
+ *  1.2  2015-03-19  ozzmosis
  *
- *  Initial version.  Not very portable.
+ *  Change hex style from DEADBEEFh to 0xdeafbeef in output.
  *
  *  1.1  2002-10-17  ozzmosis
  *
  *  Portable to any ISO C platform (in theory).
  *
- *  1.2  2015-03-19  ozzmosis
+ *  1.0  1996-04-04  ozzmosis
  *
- *  Change hex style from DEADBEEFh to 0xdeafbeef in output.
+ *  Initial version.  Not very portable.
  */
 
 #include <stdio.h>
@@ -92,7 +90,7 @@ typedef struct
 }                                    /* 238 */
 SQXMSG;
 
-#ifdef _NO_VCL
+#ifdef PAUSE_ON_EXIT
 
 static void pauseOnExit(void)
 {
@@ -387,11 +385,11 @@ static void dump_sqxmsg(SQXMSG *x)
 
     dosdate_to_tm(&tm_written, x->date_written, x->time_written);
     dosdate_to_tm(&tm_arrived, x->date_arrived, x->time_arrived);
-    
+
     printf("\n\nDump of SQXMSG structure\n");
 
     divider();
-    
+
     printf("attr           : 0x%08lx (%lu)\n", x->attr, x->attr);
     printf("orig_user      : \"%s\"\n", x->from);
     printf("orig_addr      : %hu:%hu/%hu.%hu\n", x->orig_zone, x->orig_net, x->orig_node, x->orig_point);
@@ -428,7 +426,7 @@ static void traverse_frame_list(unsigned long frame_ofs, char *frame_type)
 
     assert(fseek(ifp, 0, SEEK_END) == 0);
     filesize = (unsigned long) ftell(ifp);
-    assert((long) filesize != -1L); 
+    assert((long) filesize != -1L);
 
     assert(fseek(ifp, frame_ofs, SEEK_SET) == 0);
 
@@ -461,7 +459,7 @@ int main(int argc, char **argv)
 {
     SQBASE sqb;
 
-#ifdef _NO_VCL
+#ifdef PAUSE_ON_EXIT
     pauseOnExit();
 #endif
 
