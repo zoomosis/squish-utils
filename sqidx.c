@@ -48,7 +48,7 @@
 
 static FILE *ifp;
 
-#ifdef _NO_VCL
+#ifdef PAUSE_ON_EXIT
 
 static void pauseOnExit(void)
 {
@@ -281,7 +281,7 @@ static void get_sqbase(char *base)
 
 int main(int argc, char **argv)
 {
-#ifdef _NO_VCL
+#ifdef PAUSE_ON_EXIT
     pauseOnExit();
 #endif
 
