@@ -14,4 +14,6 @@ squ2mbox.c: Converts Squish messagebases to UNIX mbox format.
 
 sqidx.c: Create an index of messages in a Squish base in CSV format.
 
+squid.c: Display information about a Squish base.
+
 To be continued...
