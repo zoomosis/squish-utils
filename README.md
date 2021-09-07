@@ -16,4 +16,4 @@ sqidx.c: Create an index of messages in a Squish base in CSV format.
 
 squid.c: Display information about a Squish base.
 
-To be continued...
+sqd2sqi.py: Create a new Squish SQI file from an existing SQD file.
