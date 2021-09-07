@@ -1,0 +1,15 @@
+squish-utils
+============
+
+Free source code for various utilities to work with Squish message base
+files.
+
+
+The Squish format was developed by Scott Dudley in the early 1990s and is
+commonly used by [FidoNet](https://en.wikipedia.org/wiki/FidoNet) BBS
+sysops, particularly when using software from the [Husky
+project](https://github.com/huskyproject).
+
+squ2mbox.c: Converts Squish messagebases to UNIX mbox format.
+
+To be continued...
