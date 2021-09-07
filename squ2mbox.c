@@ -9,55 +9,55 @@
  *  ChangeLog
  *  ---------
  *
- *  1.0  2002-10-07  ozzmosis
+ *  1.9  2002-10-30:
  *
- *	Initial version.
+ *	Bug fix: squ2mbox was not generating a date in the correct format for
+ *	the Date: field.
  *
- *  1.1  2002-10-12  ozzmosis
+ *  1.8  2002-10-19:
  *
- *	Some bugs fixed. May still crash on a corrupt message base.
+ *	Strips FidoNet control information (0x01 lines & SEEN-BYs), but not the
+ *	Origin line (because it's partly text and partly control information
+ *	and we want to know where the message came from...)
  *
- *  1.2  2002-10-12  ozzmosis
+ *  1.7  2002-10-17:
  *
- *	Parses the FTSC date and converts it to a mbox-compatible date.
+ *	Code cleanup. Added ability convert free (deleted) frames (define
+ *	CONVERT_FREE_FRAMES and recompile). Generate a new Message-Id for
+ *	messages without one.
  *
- *  1.3  2002-10-15  ozzmosis
+ *  1.6  2002-10-16:
  *
- *	Fix to allow compiling with the Borland Free Command-line Tools. If
- *	compiling from the Borland C++ Builder IDE, _NO_VCL will be defined
- *	in the Conditional Defines menu (Project:Options:Directories/Conditionals).
+ *	Minor user interface improvements.
  *
- *  1.4  2002-10-15  ozzmosis
+ *  1.5  2002-10-15:
+ *
+ *	Converted to ISO C. More error checking with assert().
+ *
+ *  1.4  2002-10-15:
  *
  *	Use the date field from the header instead of the FTSC date field.
  *
  *	Fixes to support dates prior to 1980 (although the SquishMail 1.00
  *	software wasn't released until November 1991...)
  *
- *  1.5  2002-10-15  ozzmosis
+ *  1.3  2002-10-15:
  *
- *	Converted to ISO C. More error checking with assert().
+ *	Fix to allow compiling with the Borland Free Command-line Tools. If
+ *	compiling from the Borland C++ Builder IDE, _NO_VCL will be defined
+ *	in the Conditional Defines menu (Project:Options:Directories/Conditionals).
  *
- *  1.6  2002-10-16  ozzmosis
+ *  1.2  2002-10-12:
  *
- *	Minor user interface improvements.
+ *	Parses the FTSC date and converts it to a mbox-compatible date.
  *
- *  1.7  2002-10-17  ozzmosis
+ *  1.1  2002-10-12:
  *
- *	Code cleanup. Added ability convert free (deleted) frames (define
- *	CONVERT_FREE_FRAMES and recompile). Generate a new Message-Id for
- *	messages without one.
+ *	Some bugs fixed. May still crash on a corrupt message base.
  *
- *  1.8  2002-10-19  ozzmosis
+ *  1.0  2002-10-07:
  *
- *	Strips FidoNet control information (0x01 lines & SEEN-BYs), but not the
- *	Origin line (because it's partly text and partly control information
- *	and we want to know where the message came from...)
- *
- *  1.9  2002-10-30  ozzmosis
- *
- *	Bug fix: squ2mbox was not generating a date in the correct format for
- *	the Date: field.
+ *	Initial version.
  */
 
 #define PROGRAM "squ2mbox"
@@ -73,6 +73,7 @@
 #include <assert.h>
 
 #ifdef __THINK__
+/* Symantec Think C on MacOS */
 #include <console.h>
 #endif
 
@@ -91,7 +92,7 @@ FILE *ifp, *ofp;
 static int output_ctl_lines = 0;
 static int strip_high_bit = 1;
 
-#ifdef _NO_VCL
+#ifdef PAUSE_ON_EXIT
 
 static void pauseOnExit(void)
 {
@@ -254,7 +255,7 @@ static void traverse_frame_list(unsigned long frame_ofs, unsigned long total_msg
         ctl_len = raw2ulong(tmp4);
 
         assert(fseek(ifp, 2, SEEK_CUR) == 0);
-        
+
         assert(fread(tmp2, sizeof tmp2, 1, ifp) == 1);
         frame_type = raw2ushort(tmp2);
 
@@ -296,7 +297,7 @@ static void traverse_frame_list(unsigned long frame_ofs, unsigned long total_msg
         tm_msg.tm_sec = (itime & 0x1f) << 1;
 
         msg_time = mktime(&tm_msg);
-        
+
         if (msg_time == -1)
         {
             msg_time = 0;
@@ -339,7 +340,7 @@ static void traverse_frame_list(unsigned long frame_ofs, unsigned long total_msg
         new_ctl = NULL;
         msgid = NULL;
         reply = NULL;
-        
+
         if (ctl_len != 0)
         {
             char *p;
@@ -436,7 +437,7 @@ static void traverse_frame_list(unsigned long frame_ofs, unsigned long total_msg
         {
             assert(fputc('\n', ofp) != EOF);
         }
-        
+
         assert(fputc('\n', ofp) != EOF);
 
         if (msg_len != 0)
@@ -483,7 +484,7 @@ static void traverse_frame_list(unsigned long frame_ofs, unsigned long total_msg
             {
                 free(txt);
             }
-            
+
             assert(fputc('\n', ofp) != EOF);
         }
     }
@@ -537,7 +538,7 @@ int main(int argc, char **argv)
     argc = ccommand(&argv);
 #endif
 
-#ifdef _NO_VCL
+#ifdef PAUSE_ON_EXIT
     pauseOnExit();
 #endif
 
@@ -587,7 +588,7 @@ int main(int argc, char **argv)
       PROGRAM ": Converting Squish message base to mbox format ...\n"
       "Input: %s  Output: %s\n",
       argv[1], argv[2]);
-    
+
     get_sqbase();
 
     fclose(ofp);
