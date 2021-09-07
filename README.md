@@ -13,6 +13,7 @@ particularly when using software from the [Husky project](https://github.com/hus
 squ2mbox.c: Converts Squish messagebases to UNIX mbox format.
 
 sqidx.py: Create an index of messages in a Squish base in CSV format. Supercedes sqidx.c.
+
 sqidx.c: Create an index of messages in a Squish base in CSV format. Obsoleted by sqidx.py.
 
 squid.c: Display information about a Squish base.
