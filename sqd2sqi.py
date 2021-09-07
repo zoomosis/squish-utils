@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""sqd2sqi creates a new Squish SQI file from existing SQD file.
+"""sqd2sqi creates a new Squish SQI file from an existing SQD file.
 
 Useful if your .sqi file becomes corrupt, or you don't actually have one.
 Some mail readers (eg. GoldED) won't read a Squish base if the .sqi file
