@@ -1,3 +1,30 @@
+/*
+ *  sqidx.c
+ *
+ *  Create an index of messages in a Squish message base in CSV format.
+ *
+ *  Written by Andrew Clarke and released to the public domain.
+ *
+ *
+ *  Messages are listed in reverse order (newest to oldest), with the
+ *  following fields:
+ *
+ *  Offset, Hash, FromName, ToName, Subject, DateTime
+ *
+ *  Offset: the offset in bytes to the beginning of the message frame
+ *  Hash: a unique hex value of the hashed DateTime followed by the hashed FromName + ToName + Subject
+ *  FromName: who wrote the message
+ *  ToName: who the message is for
+ *  Subject: the message subject
+ *  DateTime: when the message was written in YYYY-mm-dd HH:MM:SS format
+ *
+ *  Example:
+ *
+ *  "4346","7e9aebf9c3a91be0e9104abd01d65","Josh Lewis","Jeff Roule","Help me","1996-06-23 01:21:20"
+ *  "2498","7e9892d5506e99d85662b2ee464441be","Neil Walker","Richard Lionheart","help","1996-06-19 11:36:02"
+ *  "256","7e9832a687c789c246ef9e25204ca286","Francois Blais","Leo V. Mironoff","Finished product?","1996-06-15 16:35:46"
+ */
+
 #define PROGRAM "sqidx"
 #define VERSION "1.3"
 
@@ -63,13 +90,13 @@ static unsigned long strhash(char * key)
     {
     	return h;
     }
-    
+
     while (*key != '\0')
     {
         h = (h << 5) - h + *key;  /* hash * 31 + *key */
     	key++;
     }
-    
+
     return h;
 }
 
@@ -129,7 +156,7 @@ static void traverse_frame_list(unsigned long frame_ofs)
         assert(fread(tmp4, sizeof tmp4, 1, ifp) == 1);
         prev_frame = raw2ulong(tmp4);
 
-        /* if this isn't a normal message frame (eg. it has been deleted), 
+        /* if this isn't a normal message frame (eg. it has been deleted),
            skip over it */
 
         assert(fseek(ifp, frame_ofs + 24, SEEK_SET) == 0);
