@@ -19,3 +19,5 @@ sqidx.c: Create an index of messages in a Squish base in CSV format. Obsoleted b
 squid.c: Display information about a Squish base.
 
 sqd2sqi.py: Create a new Squish SQI file from an existing SQD file.
+
+postmsg/postmsg.c: Post a message from stdin to a Squish or FTS-1 *.MSG message base.
